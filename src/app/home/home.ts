@@ -12,6 +12,8 @@ import { tableHeaders } from '../../fields/tableHeaders';
 })
 export class Home implements OnInit {
   legoPieces: any[] = [];
+  originalLegoPieces: any[] = [];
+  posibleOptions: any[] = [];
   tableHeaders = tableHeaders;
 
   constructor(private appService: AppService) { }
@@ -26,6 +28,7 @@ export class Home implements OnInit {
         this.legoPieces = data;
         this.loadSetImages();
         this.loadPieceImage();
+        this.originalLegoPieces = [...this.legoPieces];
       },
       error: (error) => {
         console.error('Error fetching lego pieces:', error);
@@ -58,5 +61,41 @@ export class Home implements OnInit {
         image: `https://www.lego.com/cdn/product-assets/element.img.photoreal.192x192/${piece.code}.jpg`
       }
     });
+  }
+
+  onSearchByChange(event: any): void {
+    const searchBy = event.target.value;
+    switch (searchBy) {
+      case 'codigo-set':
+        this.getOptions('lego');
+        break;
+      case 'lego-set':
+        this.getOptions('set');
+        break;
+      case 'task':
+        this.getOptions('task');
+        break;
+      case 'pedido':
+        this.getOptions('pedido');
+        break;
+      case 'completo':
+        this.getOptions('completo');
+        break;
+      case 'reemplazado':
+        this.getOptions('reemplazado');
+        break;
+    }
+  }
+
+  getOptions(category: string): void {
+    this.appService.getOptions(category).subscribe({
+      next: (options) => {
+        this.posibleOptions = options;
+        console.log('Fetched options:', options);
+      },
+      error: (error) => {
+        console.error('Error fetching options:', error);
+      }
+    })
   }
 }

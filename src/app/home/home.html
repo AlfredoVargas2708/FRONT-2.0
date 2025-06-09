@@ -4,7 +4,20 @@
         <button>Agregar Nueva Pieza</button>
     </div>
     <div class="lego-search">
-        <input type="number" placeholder="Buscar Pieza" />
+        <div class="search-code">
+            <input type="number" placeholder="Buscar Pieza" />
+        </div>
+        <div class="search-by">
+            <select (change)="onSearchByChange($event)">
+                <option value="codigo-set">Código Set</option>
+                <option value="lego-set">Lego Set</option>
+                <option value="task">Bolsa</option>
+                <option value="pedido">Pedido</option>
+                <option value="completo">Completo</option>
+                <option value="reemplazado">Reemplazado</option>
+            </select>
+            <input type="text" placeholder="Buscar..." />
+        </div>
     </div>
     <div class="lego-table">
         <table>

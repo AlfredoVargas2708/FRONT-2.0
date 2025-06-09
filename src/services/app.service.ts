@@ -17,4 +17,8 @@ export class AppService {
   getSetImages(): Observable<any> {
     return this.http.get(`${environment.apiUrl}/images`)
   }
+
+  getOptions(category: string): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/options?category=${category}`)
+  }
 }
