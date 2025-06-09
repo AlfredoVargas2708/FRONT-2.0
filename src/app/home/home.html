@@ -21,7 +21,7 @@
         </div>
         <div class="search-by-results" [ngStyle]="{'display': showSearchOptions ? 'block' : 'none'}">
             <ul>
-                <li *ngFor="let option of searchOptions">{{ option[selectedSearchBy] }}</li>
+                <li *ngFor="let option of searchOptions" (click)="onOptionSelected(option)">{{ option[selectedSearchBy] }}</li>
             </ul>
         </div>
     </div>

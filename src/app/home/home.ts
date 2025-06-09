@@ -113,4 +113,10 @@ export class Home implements OnInit {
     this.searchOptions = this.originalOptions.filter(option => option[this.selectedSearchBy].toLowerCase().includes(searchTerm))
     this.showSearchOptions = true;
   }
+
+  onOptionSelected(option: any): void {
+    this.selectedOption = option[this.selectedSearchBy];
+    this.showSearchOptions = false;
+    this.legoPieces = this.originalLegoPieces.filter(piece => piece[this.selectedSearchBy] === this.selectedOption);
+  }
 }
