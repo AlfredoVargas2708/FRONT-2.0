@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AppService } from '../../services/app.service';
 import { tableHeaders } from '../../fields/tableHeaders';
@@ -13,8 +13,14 @@ import { tableHeaders } from '../../fields/tableHeaders';
 export class Home implements OnInit {
   legoPieces: any[] = [];
   originalLegoPieces: any[] = [];
-  posibleOptions: any[] = [];
+  searchOptions: any[] = [];
+  originalOptions: any[] = [];
   tableHeaders = tableHeaders;
+  selectedSearchBy: string = '';
+  selectedOption: string = '';
+  showSearchOptions: boolean = false;
+
+  @ViewChild('searchByInput') searchInput!: ElementRef;
 
   constructor(private appService: AppService) { }
 
@@ -88,14 +94,23 @@ export class Home implements OnInit {
   }
 
   getOptions(category: string): void {
+    this.selectedSearchBy = category;
+    this.searchInput.nativeElement.value = '';
+    this.showSearchOptions = false;
     this.appService.getOptions(category).subscribe({
       next: (options) => {
-        this.posibleOptions = options;
-        console.log('Fetched options:', options);
+        this.searchOptions = options;
+        this.originalOptions = [...options];
       },
       error: (error) => {
         console.error('Error fetching options:', error);
       }
     })
+  }
+
+  onSearchInput(event: any): void {
+    const searchTerm = event.target.value.toLowerCase();
+    this.searchOptions = this.originalOptions.filter(option => option[this.selectedSearchBy].toLowerCase().includes(searchTerm))
+    this.showSearchOptions = true;
   }
 }

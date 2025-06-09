@@ -9,6 +9,7 @@
         </div>
         <div class="search-by">
             <select (change)="onSearchByChange($event)">
+                <option value="" disabled selected>Seleccionar...</option>
                 <option value="codigo-set">Código Set</option>
                 <option value="lego-set">Lego Set</option>
                 <option value="task">Bolsa</option>
@@ -16,7 +17,12 @@
                 <option value="completo">Completo</option>
                 <option value="reemplazado">Reemplazado</option>
             </select>
-            <input type="text" placeholder="Buscar..." />
+            <input #searchByInput type="text" placeholder="Buscar..." (input)="onSearchInput($event)" />
+        </div>
+        <div class="search-by-results" [ngStyle]="{'display': showSearchOptions ? 'block' : 'none'}">
+            <ul>
+                <li *ngFor="let option of searchOptions">{{ option[selectedSearchBy] }}</li>
+            </ul>
         </div>
     </div>
     <div class="lego-table">
