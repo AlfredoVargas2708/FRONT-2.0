@@ -4,7 +4,12 @@ import { Home } from './home/home';
 export const routes: Routes = [
     {
         path: '',
-        component: Home,
+        redirectTo: 'home',
         pathMatch: 'full'
+    },
+    {
+        path: 'home',
+        component: Home,
+        title: 'Home'
     }
 ];
