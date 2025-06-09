@@ -127,16 +127,7 @@ export class Home implements OnInit {
         piece.code.toLowerCase().includes(searchTerm)
       );
       if (this.legoPieces.length === 0) {
-        Swal.fire({
-          icon: 'info',
-          title: 'No se encontraron resultados',
-          text: 'Por favor, intenta con un término de búsqueda diferente.',
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 4000,
-          timerProgressBar: true,
-        });
+        this.onShowInfoSwal('No se encontraron resultados', 'Por favor, intenta con un término de búsqueda diferente.');
       } else {
         this.showSearchOptions = false;
         this.selectedOption = '';
@@ -144,6 +135,45 @@ export class Home implements OnInit {
     } else {
       this.legoPieces = [...this.originalLegoPieces];
     }
+  }
+
+  onShowInfoSwal(title: string, text: string): void {
+    Swal.fire({
+      icon: 'info',
+      title: title,
+      text: text,
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 4000,
+      timerProgressBar: true,
+    });
+  }
+
+  onShowSuccessSwal(title: string, text: string): void {
+    Swal.fire({
+      icon: 'success',
+      title: title,
+      text: text,
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+    });
+  }
+
+  onShowErrorSwal(title: string, text: string): void {
+    Swal.fire({
+      icon: 'error',
+      title: title,
+      text: text,
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 4000,
+      timerProgressBar: true,
+    });
   }
 
   onSearchOptionInput(event: any): void {
@@ -179,32 +209,14 @@ export class Home implements OnInit {
 
     this.appService.updateLegoPiece(this.pieceId, updatedPiece).subscribe({
       next: () => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Cambios guardados',
-          text: 'Los cambios se han guardado correctamente.',
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 3000,
-          timerProgressBar: true,
-        });
+        this.onShowSuccessSwal('Cambios guardados', 'Los cambios se han guardado correctamente.');
+        this.editForm.reset();
+        this.pieceId = 0; // Reset pieceId after saving
         this.cdr.detectChanges();
       },
       error: (error) => {
-        // Revertir cambios si falla
-        this.loadPieces();
         console.error('Error updating piece:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error al guardar cambios',
-          text: 'Hubo un problema al guardar los cambios. Por favor, inténtalo de nuevo.',
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 3000,
-          timerProgressBar: true,
-        });
+        this.onShowErrorSwal('Error al guardar cambios', 'Hubo un problema al guardar los cambios. Por favor, inténtalo de nuevo.');
       }
     });
   }
