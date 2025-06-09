@@ -6,4 +6,41 @@
     <div class="lego-search">
         <input type="number" placeholder="Buscar Pieza" />
     </div>
+    <div class="lego-table">
+        <table>
+            <thead>
+                <tr>
+                    <th *ngFor="let header of tableHeaders">{{ header }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let piece of legoPieces">
+                    <td>
+                        <div class="image-cell pieza">
+                            <img [src]="piece.image" alt="Imagen de la Pieza" />
+                        </div>
+                    </td>
+                    <td>{{ piece.code }}</td>
+                    <td>{{ piece.lego }}</td>
+                    <td>{{ piece.set }}</td>
+                    <td>
+                        <div class="image-cell set">
+                            <img [src]="piece.image_set" alt="Imagen del Set" />
+                        </div>
+                    </td>
+                    <td>{{ piece.cant }}</td>
+                    <td>{{ piece.task }}</td>
+                    <td>{{ piece.pedido }}</td>
+                    <td>{{ piece.completo }}</td>
+                    <td>{{ piece.reemplazado }}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn btn-primary">Editar</button>
+                            <button class="btn btn-danger">Eliminar</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>

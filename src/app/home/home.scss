@@ -31,14 +31,72 @@
 
 .lego-search {
     width: 100%;
-    height: 30px;
+    height: 50px;
 
     input {
         width: 20%;
-        height: 100%;
+        height: 70%;
         border-radius: 10px;
         border: 1px solid #ccc;
         padding: 5px 10px;
         font-size: 16px;
+    }
+}
+
+.lego-table {
+    width: 100%;
+    overflow: auto;
+    max-height: calc(100vh - 100px);
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+
+        thead th {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 2;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            font-size: 16px;
+            font-family: Georgia, 'Times New Roman', Times, serif
+        }
+
+        tbody {
+            .image-cell {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                &.pieza {
+                    width: 100px;
+                    height: 100px;
+                }
+
+                &.set {
+                    width: 150px;
+                    height: 150px;
+                }
+
+                img {
+                    max-width: 100%;
+                    max-height: 100%;
+                    object-fit: contain;
+                }
+            }
+
+            .actions {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                gap: 10px;
+            }
+        }
     }
 }
