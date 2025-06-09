@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AppService } from '../../services/app.service';
 import { tableHeaders } from '../../fields/tableHeaders';
@@ -22,12 +22,14 @@ export class Home implements OnInit {
   selectedSearchBy: string = '';
   selectedOption: string = '';
   showSearchOptions: boolean = false;
+  pieceId: number = 0;
 
   editForm: FormGroup;
 
-  @ViewChild('searchByInput') searchInput!: ElementRef;
+  @ViewChild('searchByInput') searchByInput!: ElementRef;
+  @ViewChild('searchInput') searchInput!: ElementRef;
 
-  constructor(private appService: AppService, private fb: FormBuilder) {
+  constructor(private appService: AppService, private fb: FormBuilder, private cdr: ChangeDetectorRef) {
     this.editForm = this.fb.group({});
     this.editFormFields.forEach(field => {
       this.editForm.addControl(field.name, this.fb.control(''));
@@ -105,7 +107,7 @@ export class Home implements OnInit {
 
   getOptions(category: string): void {
     this.selectedSearchBy = category;
-    this.searchInput.nativeElement.value = '';
+    this.searchByInput.nativeElement.value = '';
     this.showSearchOptions = false;
     this.appService.getOptions(category).subscribe({
       next: (options) => {
@@ -135,6 +137,9 @@ export class Home implements OnInit {
           timer: 4000,
           timerProgressBar: true,
         });
+      } else {
+        this.showSearchOptions = false;
+        this.selectedOption = '';
       }
     } else {
       this.legoPieces = [...this.originalLegoPieces];
@@ -155,6 +160,66 @@ export class Home implements OnInit {
 
   openEditModal(piece: any): void {
     console.log('Open edit modal for piece:', piece);
+    this.pieceId = piece.id;
     this.editForm.patchValue(piece);
+  }
+
+  onSaveEditChanges(): void {
+    const updatedPiece = this.editForm.value;
+
+    if (this.searchByInput.nativeElement.value !== '') {
+      this.onSearchOptionInput({ target: { value: this.searchByInput.nativeElement.value } });
+      this.onUpdatePieces(updatedPiece);
+    } else if (this.searchInput.nativeElement.value !== '') {
+      this.onSearchInput({ target: { value: this.searchInput.nativeElement.value } });
+      this.onUpdatePieces(updatedPiece);
+    } else {
+      this.onUpdatePieces(updatedPiece);
+    }
+
+    this.appService.updateLegoPiece(this.pieceId, updatedPiece).subscribe({
+      next: () => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Cambios guardados',
+          text: 'Los cambios se han guardado correctamente.',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+        });
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        // Revertir cambios si falla
+        this.loadPieces();
+        console.error('Error updating piece:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al guardar cambios',
+          text: 'Hubo un problema al guardar los cambios. Por favor, inténtalo de nuevo.',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+        });
+      }
+    });
+  }
+
+  onUpdatePieces(updatedPiece: any): void {
+    // Actualización optimista
+    const index = this.legoPieces.findIndex(p => p.id === this.pieceId);
+    if (index !== -1) {
+      this.legoPieces[index] = { ...this.legoPieces[index], ...updatedPiece };
+    }
+
+    // También actualizar en originalLegoPieces si es necesario
+    const originalIndex = this.originalLegoPieces.findIndex(p => p.id === this.pieceId);
+    if (originalIndex !== -1) {
+      this.originalLegoPieces[originalIndex] = { ...this.originalLegoPieces[originalIndex], ...updatedPiece };
+    }
   }
 }

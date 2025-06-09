@@ -25,4 +25,8 @@ export class AppService {
   getLegoPiecesByCode(code: string): Observable<any> {
     return this.http.get(`${environment.apiUrl}/pieces/${code}`);
   }
+
+  updateLegoPiece(id: number, data: any): Observable<any> {
+    return this.http.put(`${environment.apiUrl}/pieces/${id}`, data);
+  }
 }
