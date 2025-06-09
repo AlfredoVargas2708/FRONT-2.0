@@ -77,13 +77,18 @@
                     <form [formGroup]="editForm" class="edit-form">
                         <ng-container *ngFor="let field of editFormFields" class="form-group">
                             <label [for]="field.name" class="form-label">{{ field.label }}</label>
-                            <input [id]="field.name" [formControlName]="field.name" class="form-control" />
+                            <input [id]="field.name" [formControlName]="field.name" class="form-control"
+                            *ngIf="field.name !== 'pedido' && field.name !== 'completo'" />
+                            <select *ngIf="field.name === 'pedido' || field.name === 'completo'" [formControlName]="field.name" class="form-select">
+                                <option *ngFor="let option of field.name === 'pedido' ? pedidoOptions : completoOptions" [value]="option[field.name]">{{ option[field.name] }}</option>
+                            </select>
                         </ng-container>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="onSaveEditChanges()">Save changes</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                        (click)="onSaveEditChanges()">Save changes</button>
                 </div>
             </div>
         </div>

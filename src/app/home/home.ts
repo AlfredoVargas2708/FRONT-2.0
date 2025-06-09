@@ -17,6 +17,8 @@ export class Home implements OnInit {
   originalLegoPieces: any[] = [];
   searchOptions: any[] = [];
   originalOptions: any[] = [];
+  pedidoOptions: any[] = [];
+  completoOptions: any[] = [];
   tableHeaders = tableHeaders;
   editFormFields = editFormFields;
   selectedSearchBy: string = '';
@@ -38,6 +40,7 @@ export class Home implements OnInit {
 
   ngOnInit(): void {
     this.loadPieces();
+    this.loadOptions();
   }
 
   loadPieces(): void {
@@ -52,6 +55,26 @@ export class Home implements OnInit {
         console.error('Error fetching lego pieces:', error);
       }
     })
+  }
+
+  loadOptions(): void {
+    this.appService.getOptions('pedido').subscribe({
+      next: (options) => {
+        this.pedidoOptions = options;
+      },
+      error: (error) => {
+        console.error('Error fetching pedido options:', error);
+      }
+    });
+
+    this.appService.getOptions('completo').subscribe({
+      next: (options) => {
+        this.completoOptions = options;
+      },
+      error: (error) => {
+        console.error('Error fetching completo options:', error);
+      }
+    });
   }
 
   loadSetImages(): void {
@@ -189,7 +212,6 @@ export class Home implements OnInit {
   }
 
   openEditModal(piece: any): void {
-    console.log('Open edit modal for piece:', piece);
     this.pieceId = piece.id;
     this.editForm.patchValue(piece);
   }
