@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AppService } from '../../services/app.service';
 import { tableHeaders } from '../../fields/tableHeaders';
 import { editFormFields } from '../../fields/editForm';
+import { addFormFields } from '../../fields/addForm';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -21,12 +22,14 @@ export class Home implements OnInit {
   completoOptions: any[] = [];
   tableHeaders = tableHeaders;
   editFormFields = editFormFields;
+  addFormFields = addFormFields;
   selectedSearchBy: string = '';
   selectedOption: string = '';
   showSearchOptions: boolean = false;
   pieceId: number = 0;
 
   editForm: FormGroup;
+  addForm: FormGroup;
 
   @ViewChild('searchByInput') searchByInput!: ElementRef;
   @ViewChild('searchInput') searchInput!: ElementRef;
@@ -35,6 +38,10 @@ export class Home implements OnInit {
     this.editForm = this.fb.group({});
     this.editFormFields.forEach(field => {
       this.editForm.addControl(field.name, this.fb.control(''));
+    });
+    this.addForm = this.fb.group({});
+    this.addFormFields.forEach(field => {
+      this.addForm.addControl(field.name, this.fb.control(''));
     });
   }
 
@@ -234,7 +241,9 @@ export class Home implements OnInit {
         this.onShowSuccessSwal('Cambios guardados', 'Los cambios se han guardado correctamente.');
         this.editForm.reset();
         this.pieceId = 0; // Reset pieceId after saving
-        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.loadPieces();
+        }, 0);
       },
       error: (error) => {
         console.error('Error updating piece:', error);
@@ -244,16 +253,39 @@ export class Home implements OnInit {
   }
 
   onUpdatePieces(updatedPiece: any): void {
-    // Actualización optimista
     const index = this.legoPieces.findIndex(p => p.id === this.pieceId);
     if (index !== -1) {
       this.legoPieces[index] = { ...this.legoPieces[index], ...updatedPiece };
     }
-
-    // También actualizar en originalLegoPieces si es necesario
     const originalIndex = this.originalLegoPieces.findIndex(p => p.id === this.pieceId);
     if (originalIndex !== -1) {
       this.originalLegoPieces[originalIndex] = { ...this.originalLegoPieces[originalIndex], ...updatedPiece };
     }
+  }
+
+  onAddFormSubmit(): void {
+    const newPiece = this.addForm.value;
+    this.appService.addLegoPiece(newPiece).subscribe({
+      next: () => {
+        this.onShowSuccessSwal('Pieza añadida', 'La nueva pieza se ha añadido correctamente.');
+        this.addForm.reset();
+      },
+      error: (error) => {
+        console.error('Error adding piece:', error);
+        this.onShowErrorSwal('Error al añadir pieza', 'Hubo un problema al añadir la nueva pieza. Por favor, inténtalo de nuevo.');
+      }
+    })
+  }
+
+  onDeletePiece(piece: any): void {
+    this.appService.deleteLegoPiece(piece.id).subscribe({
+      next: () => {
+        this.onShowSuccessSwal('Pieza eliminada', 'La pieza se ha eliminado correctamente.');
+      },
+      error: (error) => {
+        console.error('Error deleting piece:', error);
+        this.onShowErrorSwal('Error al eliminar pieza', 'Hubo un problema al eliminar la pieza. Por favor, inténtalo de nuevo.');
+      }
+    })
   }
 }

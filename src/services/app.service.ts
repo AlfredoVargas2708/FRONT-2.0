@@ -29,4 +29,12 @@ export class AppService {
   updateLegoPiece(id: number, data: any): Observable<any> {
     return this.http.put(`${environment.apiUrl}/pieces/${id}`, data);
   }
+
+  addLegoPiece(data: any): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/pieces`, data);
+  }
+
+  deleteLegoPiece(id: number): Observable<any> {
+    return this.http.delete(`${environment.apiUrl}/pieces/${id}`);
+  }
 }

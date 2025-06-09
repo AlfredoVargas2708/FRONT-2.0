@@ -1,7 +1,8 @@
 <div class="lego-pieces-container">
     <div class="lego-header">
         <h1>Piezas de Lego</h1>
-        <button>Agregar Nueva Pieza</button>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Agregar Nueva
+            Pieza</button>
     </div>
     <div class="lego-search">
         <div class="search-code">
@@ -57,7 +58,7 @@
                         <div class="actions">
                             <button class="btn btn-primary" type="button" class="btn btn-primary" data-bs-toggle="modal"
                                 data-bs-target="#editModal" (click)="openEditModal(piece)">Editar</button>
-                            <button class="btn btn-danger">Eliminar</button>
+                            <button class="btn btn-danger" (click)="onDeletePiece(piece)">Eliminar</button>
                         </div>
                     </td>
                 </tr>
@@ -78,9 +79,11 @@
                         <ng-container *ngFor="let field of editFormFields" class="form-group">
                             <label [for]="field.name" class="form-label">{{ field.label }}</label>
                             <input [id]="field.name" [formControlName]="field.name" class="form-control"
-                            *ngIf="field.name !== 'pedido' && field.name !== 'completo'" />
-                            <select *ngIf="field.name === 'pedido' || field.name === 'completo'" [formControlName]="field.name" class="form-select">
-                                <option *ngFor="let option of field.name === 'pedido' ? pedidoOptions : completoOptions" [value]="option[field.name]">{{ option[field.name] }}</option>
+                                *ngIf="field.name !== 'pedido' && field.name !== 'completo'" />
+                            <select *ngIf="field.name === 'pedido' || field.name === 'completo'"
+                                [formControlName]="field.name" class="form-select">
+                                <option *ngFor="let option of field.name === 'pedido' ? pedidoOptions : completoOptions"
+                                    [value]="option[field.name]">{{ option[field.name] }}</option>
                             </select>
                         </ng-container>
                     </form>
@@ -89,6 +92,37 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
                         (click)="onSaveEditChanges()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Agregar Modal -->
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="addModalLabel">Agregar Nueva Pieza de Lego</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="addForm" class="add-form">
+                        <ng-container *ngFor="let field of addFormFields" class="form-group">
+                            <label [for]="field.name" class="form-label">{{ field.label }}</label>
+                            <input [id]="field.name" [formControlName]="field.name" class="form-control"
+                                *ngIf="field.name !== 'pedido' && field.name !== 'completo'" />
+                            <select *ngIf="field.name === 'pedido' || field.name === 'completo'"
+                                [formControlName]="field.name" class="form-select">
+                                <option *ngFor="let option of field.name === 'pedido' ? pedidoOptions : completoOptions"
+                                    [value]="option[field.name]">{{ option[field.name] }}</option>
+                            </select>
+                        </ng-container>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                        (click)="onAddFormSubmit()">Save changes</button>
                 </div>
             </div>
         </div>
