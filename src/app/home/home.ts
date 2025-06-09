@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AppService } from '../../services/app.service';
 import { tableHeaders } from '../../fields/tableHeaders';
+import { editFormFields } from '../../fields/editForm';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -17,13 +18,21 @@ export class Home implements OnInit {
   searchOptions: any[] = [];
   originalOptions: any[] = [];
   tableHeaders = tableHeaders;
+  editFormFields = editFormFields;
   selectedSearchBy: string = '';
   selectedOption: string = '';
   showSearchOptions: boolean = false;
 
+  editForm: FormGroup;
+
   @ViewChild('searchByInput') searchInput!: ElementRef;
 
-  constructor(private appService: AppService) { }
+  constructor(private appService: AppService, private fb: FormBuilder) {
+    this.editForm = this.fb.group({});
+    this.editFormFields.forEach(field => {
+      this.editForm.addControl(field.name, this.fb.control(''));
+    });
+  }
 
   ngOnInit(): void {
     this.loadPieces();
@@ -115,7 +124,7 @@ export class Home implements OnInit {
       this.legoPieces = this.originalLegoPieces.filter(piece =>
         piece.code.toLowerCase().includes(searchTerm)
       );
-      if( this.legoPieces.length === 0) {
+      if (this.legoPieces.length === 0) {
         Swal.fire({
           icon: 'info',
           title: 'No se encontraron resultados',
@@ -142,5 +151,10 @@ export class Home implements OnInit {
     this.selectedOption = option[this.selectedSearchBy];
     this.showSearchOptions = false;
     this.legoPieces = this.originalLegoPieces.filter(piece => piece[this.selectedSearchBy] === this.selectedOption);
+  }
+
+  openEditModal(piece: any): void {
+    console.log('Open edit modal for piece:', piece);
+    this.editForm.patchValue(piece);
   }
 }

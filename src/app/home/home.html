@@ -5,7 +5,7 @@
     </div>
     <div class="lego-search">
         <div class="search-code">
-            <input type="number" placeholder="Buscar Pieza" (input)="onSearchInput($event)"/>
+            <input type="number" placeholder="Buscar Pieza" (input)="onSearchInput($event)" />
         </div>
         <div class="search-by">
             <select (change)="onSearchByChange($event)">
@@ -21,7 +21,8 @@
         </div>
         <div class="search-by-results" [ngStyle]="{'display': showSearchOptions ? 'block' : 'none'}">
             <ul>
-                <li *ngFor="let option of searchOptions" (click)="onOptionSelected(option)">{{ option[selectedSearchBy] }}</li>
+                <li *ngFor="let option of searchOptions" (click)="onOptionSelected(option)">{{ option[selectedSearchBy]
+                    }}</li>
             </ul>
         </div>
     </div>
@@ -54,12 +55,37 @@
                     <td>{{ piece.reemplazado }}</td>
                     <td>
                         <div class="actions">
-                            <button class="btn btn-primary">Editar</button>
+                            <button class="btn btn-primary" type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#editModal" (click)="openEditModal(piece)">Editar</button>
                             <button class="btn btn-danger">Eliminar</button>
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="editModalLabel">Editar Pieza de Lego</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="editForm" class="edit-form">
+                        <ng-container *ngFor="let field of editFormFields" class="form-group">
+                            <label [for]="field.name">{{ field.label }}</label>
+                            <input [id]="field.name" [formControlName]="field.name" />
+                        </ng-container>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
