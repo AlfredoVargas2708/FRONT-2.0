@@ -5,7 +5,7 @@
     </div>
     <div class="lego-search">
         <div class="search-code">
-            <input type="number" placeholder="Buscar Pieza" />
+            <input type="number" placeholder="Buscar Pieza" (input)="onSearchInput($event)"/>
         </div>
         <div class="search-by">
             <select (change)="onSearchByChange($event)">
@@ -17,7 +17,7 @@
                 <option value="completo">Completo</option>
                 <option value="reemplazado">Reemplazado</option>
             </select>
-            <input #searchByInput type="text" placeholder="Buscar..." (input)="onSearchInput($event)" />
+            <input #searchByInput type="text" placeholder="Buscar..." (input)="onSearchOptionInput($event)" />
         </div>
         <div class="search-by-results" [ngStyle]="{'display': showSearchOptions ? 'block' : 'none'}">
             <ul>

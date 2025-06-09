@@ -21,4 +21,8 @@ export class AppService {
   getOptions(category: string): Observable<any> {
     return this.http.get(`${environment.apiUrl}/options?category=${category}`)
   }
+
+  getLegoPiecesByCode(code: string): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/pieces/${code}`);
+  }
 }

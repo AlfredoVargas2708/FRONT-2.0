@@ -3,6 +3,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AppService } from '../../services/app.service';
 import { tableHeaders } from '../../fields/tableHeaders';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-home',
@@ -109,6 +110,29 @@ export class Home implements OnInit {
   }
 
   onSearchInput(event: any): void {
+    const searchTerm = event.target.value.toLowerCase();
+    if (searchTerm !== '') {
+      this.legoPieces = this.originalLegoPieces.filter(piece =>
+        piece.code.toLowerCase().includes(searchTerm)
+      );
+      if( this.legoPieces.length === 0) {
+        Swal.fire({
+          icon: 'info',
+          title: 'No se encontraron resultados',
+          text: 'Por favor, intenta con un término de búsqueda diferente.',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 4000,
+          timerProgressBar: true,
+        });
+      }
+    } else {
+      this.legoPieces = [...this.originalLegoPieces];
+    }
+  }
+
+  onSearchOptionInput(event: any): void {
     const searchTerm = event.target.value.toLowerCase();
     this.searchOptions = this.originalOptions.filter(option => option[this.selectedSearchBy].toLowerCase().includes(searchTerm))
     this.showSearchOptions = true;
