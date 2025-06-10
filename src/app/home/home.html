@@ -26,7 +26,7 @@
             <table class="table" *ngIf="showTable">
                 <thead>
                     <tr>
-                        <th *ngFor="let header of tableHeaders" class="fs-5">{{ header }}</th>
+                        <th *ngFor="let header of tableHeaders" class="fs-5 text-center">{{ header }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -36,7 +36,7 @@
                                 <img [src]="lego[body.name]"
                                     [alt]="body.name === 'imagePiece' ? 'Imagen de la Pieza' : 'Imagen del Set'" />
                             </td>
-                            <td *ngIf="body.type === 'text' || body.type === 'number'" class="text-cell fs-6">
+                            <td *ngIf="body.type === 'text' || body.type === 'number'" class="text-cell fs-6 text-center>
                                 {{ lego[body.name] }}
                             </td>
                             <td *ngIf="body.type === 'actions'">
