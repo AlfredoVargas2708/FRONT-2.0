@@ -9,8 +9,11 @@
                     <option value="" disabled selected>Seleccionar...</option>
                     <option value="{{option}}" *ngFor="let option of options">{{ option }}</option>
                 </select>
-                <input #searchByInput type="text" class="form-control w-25" (input)="onSearchResult($event)"
-                    placeholder="Buscar..." />
+                <div class="d-flex align-items-center gap-2 search-by-container">
+                    <input #searchByInput type="text" class="form-control search-by w-100" (input)="onSearchResult($event)"
+                        placeholder="Buscar..." />
+                    <img src="https://img.icons8.com/ios/50/cancel.png" alt="cancel" (click)="onClearSearch()" class="cancel-icon"/>
+                </div>
             </div>
             <div class="d-flex align-items-center" *ngIf="showResults">
                 <div class="search-results w-50 mh-25">
@@ -36,12 +39,14 @@
                                 <img [src]="lego[body.name]"
                                     [alt]="body.name === 'imagePiece' ? 'Imagen de la Pieza' : 'Imagen del Set'" />
                             </td>
-                            <td *ngIf="body.type === 'text' || body.type === 'number'" class="text-cell fs-6 text-center">
+                            <td *ngIf="body.type === 'text' || body.type === 'number'"
+                                class="text-cell fs-6 text-center">
                                 {{ lego[body.name] }}
                             </td>
                             <td *ngIf="body.type === 'actions'">
                                 <div class="d-flex flex-column gap-2">
-                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal" (click)="onEditLego(lego)">Edit</button>
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal"
+                                        (click)="onEditLego(lego)">Edit</button>
                                     <button class="btn btn-danger">Delete</button>
                                 </div>
                             </td>

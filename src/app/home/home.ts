@@ -212,6 +212,21 @@ export class Home {
     this.cdr.markForCheck();
   }
 
+  onClearSearch(): void {
+    this.searchByInput.nativeElement.value = '';
+    this.showResults = false;
+    this.showTable = false;
+    this.searchResults = [];
+    this.originalSearchResults = [];
+    this.selectedOption = '';
+    this.selectedSearchBy = '';
+    this.legoResults = [];
+    this.originalLegoResults = [];
+    this.isEditSet = false;
+    this.addForm.reset();
+    this.editForm.reset();
+  }
+
   onAddLego(): void {
     if (this.editForm.valid) {
       this.startRefresh();

@@ -8,6 +8,24 @@
     /* Light background for better contrast */
 }
 
+.search-by-container {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    padding: 0 15px 0 5px;
+}
+
+.search-by {
+    border: none;
+    background-color: transparent;
+}
+
+.cancel-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
 .search-results {
     max-height: 200px;
     overflow: auto;
