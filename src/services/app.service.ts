@@ -18,4 +18,8 @@ export class AppService {
     return this.http.post(`${environment.apiUrl}`, data);
   }
 
+  getLegoResults(searchBy: string, searchValue: string): Observable<any> {
+    return this.http.get(`${environment.apiUrl}?searchBy=${searchBy}&searchValue=${searchValue}`);
+  }
+
 }

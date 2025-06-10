@@ -9,7 +9,8 @@
                     <option value="" disabled selected>Seleccionar...</option>
                     <option value="{{option}}" *ngFor="let option of options">{{ option }}</option>
                 </select>
-                <input #searchByInput type="text" class="form-control w-25" [value]="selectedSearchBy" (input)="onSearchResult($event)" placeholder="Buscar..." />
+                <input #searchByInput type="text" class="form-control w-25" (input)="onSearchResult($event)"
+                    placeholder="Buscar..." />
             </div>
             <div class="d-flex align-items-center" *ngIf="showResults">
                 <div class="search-results w-50 mh-25">
@@ -18,6 +19,36 @@
                     </ul>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="d-flex flex-column justify-content-center">
+        <div class="lego-table">
+            <table class="table" *ngIf="showTable">
+                <thead>
+                    <tr>
+                        <th *ngFor="let header of tableHeaders">{{ header }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let lego of legoResults">
+                        <ng-container *ngFor="let body of tableBody">
+                            <td *ngIf="body.type === 'image'" class="image-cell">
+                                <img [src]="lego[body.name]" [alt]="body.name === 'imagePiece' ? 'Imagen de la Pieza' : 'Imagen del Set'" />
+                            </td>
+                            <td *ngIf="body.type === 'text' || body.type === 'number'" class="text-cell">
+                                {{ lego[body.name] }}
+                            </td>
+                            <td *ngIf="body.type === 'actions'">
+                                <div class="d-flex flex-column gap-2">
+                                    <button class="btn btn-primary">Edit</button>
+                                    <button class="btn btn-danger">Delete</button>
+                                </div>
+                            </td>
+                        </ng-container>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="loader" *ngIf="isLoading"></div>
         </div>
     </div>
 </div>

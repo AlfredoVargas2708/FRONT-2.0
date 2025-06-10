@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { options } from '../../fields/options';
 import { AppService } from '../../services/app.service';
 import { tableHeaders } from '../../fields/tableHeaders';
+import { tableBody } from '../../fields/tableBody';
 import { editFormFields } from '../../fields/editForm';
 import { addFormFields } from '../../fields/addForm';
 import Swal from 'sweetalert2';
@@ -50,8 +51,14 @@ export class Home {
   ];
   searchResults: any[] = [];
   originalSearchResults: any[] = [];
+  legoResults: any[] = [];
+  originalLegoResults: any[] = [];
   addFormFields = addFormFields;
+  tableHeaders = tableHeaders;
+  tableBody = tableBody;
   showResults: boolean = false;
+  showTable: boolean = false;
+  isLoading: boolean = false;
   selectedSearchBy: string = '';
   selectedOption: string = '';
 
@@ -59,7 +66,7 @@ export class Home {
 
   @ViewChild('searchByInput') searchByInput!: ElementRef;
 
-  constructor(private fb: FormBuilder, private appService: AppService) {
+  constructor(private fb: FormBuilder, private appService: AppService, private cdr: ChangeDetectorRef) {
     this.addForm = this.fb.group({});
     this.addFormFields.forEach(field => {
       this.addForm.addControl(field.name, this.fb.control(''));
@@ -83,13 +90,19 @@ export class Home {
 
   onSearchByChange(event: any): void {
     const searchBy = event.target.value;
+    this.selectedSearchBy = searchBy;
     this.searchByInput.nativeElement.value = '';
+    this.showTable = false;
+    this.searchResults = [];
+    this.originalSearchResults = [];
+    this.selectedOption = '';
     if (searchBy) {
       this.loadResults(this.optionsResults.find(option => option.label === searchBy).name);
     }
   }
 
   loadResults(searchBy: any): void {
+    this.selectedSearchBy = searchBy;
     this.appService.getOptions(searchBy).subscribe({
       next: (options) => {
         this.searchResults = options.map((option: any) => option[searchBy]);
@@ -102,14 +115,15 @@ export class Home {
   }
 
   onSearchResult(event: any): void {
-    this.selectedOption = event.target.value;
     this.searchResults = this.originalSearchResults.filter(result => result.toLowerCase().includes(event.target.value.toLowerCase()));
     this.showResults = this.searchResults.length > 0;
   }
 
   onSelectOption(option: any): void {
-    this.selectedSearchBy = option;
+    this.selectedOption = option;
+    this.searchByInput.nativeElement.value = option;
     this.showResults = false;
+    this.loadLegoResults();
   }
 
   OnSubmitLego(): void {
@@ -134,5 +148,27 @@ export class Home {
         }
       });
     }
+  }
+
+  loadLegoResults(): void {
+    this.isLoading = true;
+    this.appService.getLegoResults(this.selectedSearchBy, this.selectedOption).subscribe({
+      next: (results) => {
+        this.legoResults = results;
+        this.originalLegoResults = [...this.legoResults];
+        this.showTable = this.legoResults.length > 0;
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        console.error('Error fetching Lego results:', error);
+        Swal.fire({
+          title: 'Error',
+          text: 'No se pudieron cargar los resultados de Lego',
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
+      }
+    })
   }
 }
