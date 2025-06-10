@@ -62,7 +62,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form [formGroup]="addForm" class="d-flex flex-wrap flex-row">
+                <form [formGroup]="addForm" class="d-flex flex-row">
                     <div class="form-group p-2" *ngFor="let field of formFields">
                         <label [for]="field.name" class="form-label">{{ field.label }}</label>
                         <input [id]="field.name" [formControlName]="field.name" class="form-control"
@@ -94,7 +94,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form [formGroup]="editForm" class="d-flex flex-wrap flex-row">
+                <form [formGroup]="editForm" class="d-flex flex-row">
                     <div class="form-group p-2" *ngFor="let field of formFields">
                         <label [for]="field.name" class="form-label">{{ field.label }}</label>
                         <input [id]="field.name" [formControlName]="field.name" class="form-control"
