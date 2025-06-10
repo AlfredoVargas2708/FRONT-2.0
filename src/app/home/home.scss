@@ -40,6 +40,12 @@
     /* Adjust height based on available space */
     overflow: auto;
 
+    thead, th {
+        position: sticky;
+        top: 0;
+        background-color: #e9ecef;
+    }
+
     .image-cell {
         width: 150px;
         height: 150px;
