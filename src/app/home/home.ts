@@ -141,11 +141,11 @@ export class Home {
       title: 'Éxito',
       text: message,
       icon: 'success',
-      confirmButtonText: 'Aceptar',
       toast: true,
       position: 'top-end',
       timer: 2000,
-      timerProgressBar: true
+      timerProgressBar: true,
+      showConfirmButton: false,
     });
   }
 
@@ -168,11 +168,11 @@ export class Home {
       title: 'Error',
       text: message,
       icon: 'error',
-      confirmButtonText: 'Aceptar',
       toast: true,
       position: 'top-end',
       timer: 2000,
-      timerProgressBar: true
+      timerProgressBar: true,
+      showConfirmButton: false,
     });
   }
 
