@@ -1,0 +1,1 @@
+export const options = ['Código-Pieza', 'Código-Set', 'Lego-Set', 'Bolsa', 'Pedido', 'Completo', 'Reemplazado']

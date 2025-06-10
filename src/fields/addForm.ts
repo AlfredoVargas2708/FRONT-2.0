@@ -4,7 +4,7 @@ export const addFormFields = [
     { name: 'set', type: 'text', label: 'Set' },
     { name: 'cant', type: 'number', label: 'Cantidad' },
     { name: 'task', type: 'number', label: 'Bolsa' },
-    { name: 'pedido', type: 'text', label: 'Pedido' },
-    { name: 'completo', type: 'checkbox', label: 'Completo' },
-    { name: 'reemplazado', type: 'checkbox', label: 'Reemplazado' },
+    { name: 'pedido', type: 'select', label: 'Pedido' },
+    { name: 'completo', type: 'select', label: 'Completo' },
+    { name: 'reemplazado', type: 'number', label: 'Reemplazado' },
 ]

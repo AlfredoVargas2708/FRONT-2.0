@@ -1,129 +1,54 @@
 <div class="lego-pieces-container">
-    <div class="lego-header">
+    <div class="d-flex flex-column justify-content-center gap-3">
         <h1>Piezas de Lego</h1>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Agregar Nueva
-            Pieza</button>
-    </div>
-    <div class="lego-search">
-        <div class="search-code">
-            <input #searchInput type="number" placeholder="Buscar Pieza" (input)="onSearchInput($event)" />
-        </div>
-        <div class="search-by">
-            <select (change)="onSearchByChange($event)">
-                <option value="" disabled selected>Seleccionar...</option>
-                <option value="codigo-set">Código Set</option>
-                <option value="lego-set">Lego Set</option>
-                <option value="task">Bolsa</option>
-                <option value="pedido">Pedido</option>
-                <option value="completo">Completo</option>
-                <option value="reemplazado">Reemplazado</option>
-            </select>
-            <input #searchByInput type="text" placeholder="Buscar..." (input)="onSearchOptionInput($event)" />
-        </div>
-        <div class="search-by-results" [ngStyle]="{'display': showSearchOptions ? 'block' : 'none'}">
-            <ul>
-                <li *ngFor="let option of searchOptions" (click)="onOptionSelected(option)">{{ option[selectedSearchBy]
-                    }}</li>
-            </ul>
-        </div>
-    </div>
-    <div class="lego-table">
-        <table>
-            <thead>
-                <tr>
-                    <th *ngFor="let header of tableHeaders">{{ header }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let piece of legoPieces">
-                    <td>
-                        <div class="image-cell pieza">
-                            <img [src]="piece.image" alt="Imagen de la Pieza" />
-                        </div>
-                    </td>
-                    <td>{{ piece.code }}</td>
-                    <td>{{ piece.lego }}</td>
-                    <td>{{ piece.set }}</td>
-                    <td>
-                        <div class="image-cell set">
-                            <img [src]="piece.image_set" alt="Imagen del Set" />
-                        </div>
-                    </td>
-                    <td>{{ piece.cant }}</td>
-                    <td>{{ piece.task }}</td>
-                    <td>{{ piece.pedido }}</td>
-                    <td>{{ piece.completo }}</td>
-                    <td>{{ piece.reemplazado }}</td>
-                    <td>
-                        <div class="actions">
-                            <button class="btn btn-primary" type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                data-bs-target="#editModal" (click)="openEditModal(piece)">Editar</button>
-                            <button class="btn btn-danger" (click)="onDeletePiece(piece)">Eliminar</button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Edit Modal -->
-    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="editModalLabel">Editar Pieza de Lego</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form [formGroup]="editForm" class="edit-form">
-                        <ng-container *ngFor="let field of editFormFields" class="form-group">
-                            <label [for]="field.name" class="form-label">{{ field.label }}</label>
-                            <input [id]="field.name" [formControlName]="field.name" class="form-control"
-                                *ngIf="field.name !== 'pedido' && field.name !== 'completo'" />
-                            <select *ngIf="field.name === 'pedido' || field.name === 'completo'"
-                                [formControlName]="field.name" class="form-select">
-                                <option *ngFor="let option of field.name === 'pedido' ? pedidoOptions : completoOptions"
-                                    [value]="option[field.name]">{{ option[field.name] }}</option>
-                            </select>
-                        </ng-container>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
-                        (click)="onSaveEditChanges()">Save changes</button>
+        <div class="d-flex flex-column justify-content-center gap-4">
+            <button type="button" class="btn btn-primary w-25" data-bs-toggle="modal" data-bs-target="#addModal">Agregar
+                Nueva Pieza</button>
+            <div class="d-flex align-items-center gap-3">
+                <select class="form-select w-25" (change)="onSearchByChange($event)">
+                    <option value="" disabled selected>Seleccionar...</option>
+                    <option value="{{option}}" *ngFor="let option of options">{{ option }}</option>
+                </select>
+                <input #searchByInput type="text" class="form-control w-25" [value]="selectedSearchBy" (input)="onSearchResult($event)" placeholder="Buscar..." />
+            </div>
+            <div class="d-flex align-items-center" *ngIf="showResults">
+                <div class="search-results w-50 mh-25">
+                    <ul>
+                        <li *ngFor="let result of searchResults" (click)="onSelectOption(result)">{{ result }}</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Agregar Modal -->
-    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="addModalLabel">Agregar Nueva Pieza de Lego</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form [formGroup]="addForm" class="add-form">
-                        <ng-container *ngFor="let field of addFormFields" class="form-group">
-                            <label [for]="field.name" class="form-label">{{ field.label }}</label>
-                            <input [id]="field.name" [formControlName]="field.name" class="form-control"
-                                *ngIf="field.name !== 'pedido' && field.name !== 'completo'" />
-                            <select *ngIf="field.name === 'pedido' || field.name === 'completo'"
-                                [formControlName]="field.name" class="form-select">
-                                <option *ngFor="let option of field.name === 'pedido' ? pedidoOptions : completoOptions"
-                                    [value]="option[field.name]">{{ option[field.name] }}</option>
-                            </select>
-                        </ng-container>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
-                        (click)="onAddFormSubmit()">Save changes</button>
-                </div>
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="addModalLabel">Agregar Nueva Pieza de Lego</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="addForm" class="d-flex flex-wrap flex-row">
+                    <div class="form-group p-2" *ngFor="let field of addFormFields">
+                        <label [for]="field.name" class="form-label">{{ field.label }}</label>
+                        <input [id]="field.name" [formControlName]="field.name" class="form-control"
+                            *ngIf="field.type === 'text' || field.type === 'number'" />
+                        <select *ngIf="field.name === 'pedido' || field.name === 'completo'"
+                            [formControlName]="field.name" class="form-control">
+                            <option value="" disabled selected>Seleccionar... </option>
+                            <option value="{{ option[field.name] }}"
+                                *ngFor="let option of field.name === 'pedido' ? pedidoOptions : completoOptions">{{
+                                option[field.name] }}</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="OnSubmitLego()">Save
+                    changes</button>
             </div>
         </div>
     </div>
