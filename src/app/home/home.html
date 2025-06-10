@@ -36,7 +36,7 @@
                                 <img [src]="lego[body.name]"
                                     [alt]="body.name === 'imagePiece' ? 'Imagen de la Pieza' : 'Imagen del Set'" />
                             </td>
-                            <td *ngIf="body.type === 'text' || body.type === 'number'" class="text-cell fs-6 text-center>
+                            <td *ngIf="body.type === 'text' || body.type === 'number'" class="text-cell fs-6 text-center">
                                 {{ lego[body.name] }}
                             </td>
                             <td *ngIf="body.type === 'actions'">
