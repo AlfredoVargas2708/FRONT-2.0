@@ -1,4 +1,4 @@
-export const addFormFields = [
+export const formField = [
     { name: 'code', type: 'text', label: 'Código' },
     { name: 'lego', type: 'number', label: 'Lego' },
     { name: 'set', type: 'text', label: 'Set' },

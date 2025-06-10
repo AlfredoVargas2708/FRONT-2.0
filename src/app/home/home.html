@@ -33,14 +33,15 @@
                     <tr *ngFor="let lego of legoResults">
                         <ng-container *ngFor="let body of tableBody">
                             <td *ngIf="body.type === 'image'" class="image-cell">
-                                <img [src]="lego[body.name]" [alt]="body.name === 'imagePiece' ? 'Imagen de la Pieza' : 'Imagen del Set'" />
+                                <img [src]="lego[body.name]"
+                                    [alt]="body.name === 'imagePiece' ? 'Imagen de la Pieza' : 'Imagen del Set'" />
                             </td>
                             <td *ngIf="body.type === 'text' || body.type === 'number'" class="text-cell">
                                 {{ lego[body.name] }}
                             </td>
                             <td *ngIf="body.type === 'actions'">
                                 <div class="d-flex flex-column gap-2">
-                                    <button class="btn btn-primary">Edit</button>
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal" (click)="onEditLego(lego)">Edit</button>
                                     <button class="btn btn-danger">Delete</button>
                                 </div>
                             </td>
@@ -62,7 +63,7 @@
             </div>
             <div class="modal-body">
                 <form [formGroup]="addForm" class="d-flex flex-wrap flex-row">
-                    <div class="form-group p-2" *ngFor="let field of addFormFields">
+                    <div class="form-group p-2" *ngFor="let field of formFields">
                         <label [for]="field.name" class="form-label">{{ field.label }}</label>
                         <input [id]="field.name" [formControlName]="field.name" class="form-control"
                             *ngIf="field.type === 'text' || field.type === 'number'" />
@@ -79,6 +80,38 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="OnSubmitLego()">Save
+                    changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="editModalLabel">Editar Pieza de Lego</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="editForm" class="d-flex flex-wrap flex-row">
+                    <div class="form-group p-2" *ngFor="let field of formFields">
+                        <label [for]="field.name" class="form-label">{{ field.label }}</label>
+                        <input [id]="field.name" [formControlName]="field.name" class="form-control"
+                            *ngIf="field.type === 'text' || field.type === 'number'" />
+                        <select *ngIf="field.name === 'pedido' || field.name === 'completo'"
+                            [formControlName]="field.name" class="form-control">
+                            <option value="" disabled selected>Seleccionar... </option>
+                            <option value="{{ option[field.name] }}"
+                                *ngFor="let option of field.name === 'pedido' ? pedidoOptions : completoOptions">{{
+                                option[field.name] }}</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="onAddLego()">Save
                     changes</button>
             </div>
         </div>

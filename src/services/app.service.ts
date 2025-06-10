@@ -22,4 +22,8 @@ export class AppService {
     return this.http.get(`${environment.apiUrl}?searchBy=${searchBy}&searchValue=${searchValue}`);
   }
 
+  editLego(data: any, id: number): Observable<any> {
+    return this.http.put(`${environment.apiUrl}/${id}`, data);
+  }
+
 }

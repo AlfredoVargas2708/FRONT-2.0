@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { options } from '../../fields/options';
 import { AppService } from '../../services/app.service';
 import { tableHeaders } from '../../fields/tableHeaders';
 import { tableBody } from '../../fields/tableBody';
-import { editFormFields } from '../../fields/editForm';
-import { addFormFields } from '../../fields/addForm';
+import { formField } from '../../fields/addForm';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -53,7 +52,7 @@ export class Home {
   originalSearchResults: any[] = [];
   legoResults: any[] = [];
   originalLegoResults: any[] = [];
-  addFormFields = addFormFields;
+  formFields = formField;
   tableHeaders = tableHeaders;
   tableBody = tableBody;
   showResults: boolean = false;
@@ -61,17 +60,28 @@ export class Home {
   isLoading: boolean = false;
   selectedSearchBy: string = '';
   selectedOption: string = '';
+  legoId: number = 0;
+  isEditSet: boolean = false;
 
   addForm: FormGroup;
+  initialEditForm: any = {};
+  editForm: FormGroup;
 
   @ViewChild('searchByInput') searchByInput!: ElementRef;
 
   constructor(private fb: FormBuilder, private appService: AppService, private cdr: ChangeDetectorRef) {
     this.addForm = this.fb.group({});
-    this.addFormFields.forEach(field => {
-      this.addForm.addControl(field.name, this.fb.control(''));
-    });
+    this.editForm = this.fb.group({});
+    [this.addForm, this.editForm].forEach(form => {
+      this.loadForm(form);
+    })
     this.loadOptions();
+  }
+
+  loadForm(form: FormGroup): void {
+    this.formFields.forEach(field => {
+      form.addControl(field.name, this.fb.control(''));
+    });
   }
 
   loadOptions(): void {
@@ -126,49 +136,110 @@ export class Home {
     this.loadLegoResults();
   }
 
+  showSuccessToast(message: string): void {
+    Swal.fire({
+      title: 'Éxito',
+      text: message,
+      icon: 'success',
+      confirmButtonText: 'Aceptar',
+      toast: true,
+      position: 'top-end',
+      timer: 2000,
+      timerProgressBar: true
+    });
+  }
+
   OnSubmitLego(): void {
-    if(this.addForm.valid) {
+    if (this.addForm.valid) {
       this.appService.addLego(this.addForm.value).subscribe({
         next: () => {
-          Swal.fire({
-            title: 'Éxito',
-            text: 'Lego agregado correctamente',
-            icon: 'success',
-            confirmButtonText: 'Aceptar'
-          });
+          this.showSuccessToast('Lego agregado correctamente');
           this.addForm.reset();
         },
         error: () => {
-          Swal.fire({
-            title: 'Error',
-            text: 'No se pudo agregar la pieza de Lego',
-            icon: 'error',
-            confirmButtonText: 'Aceptar'
-          });
+          this.showErrorToast('No se pudo agregar la pieza de Lego');
         }
       });
     }
   }
 
+  showErrorToast(message: string): void {
+    Swal.fire({
+      title: 'Error',
+      text: message,
+      icon: 'error',
+      confirmButtonText: 'Aceptar',
+      toast: true,
+      position: 'top-end',
+      timer: 2000,
+      timerProgressBar: true
+    });
+  }
+
   loadLegoResults(): void {
-    this.isLoading = true;
+    this.startRefresh();
     this.appService.getLegoResults(this.selectedSearchBy, this.selectedOption).subscribe({
       next: (results) => {
         this.legoResults = results;
         this.originalLegoResults = [...this.legoResults];
-        this.showTable = this.legoResults.length > 0;
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.endRefresh();
       },
       error: (error) => {
         console.error('Error fetching Lego results:', error);
-        Swal.fire({
-          title: 'Error',
-          text: 'No se pudieron cargar los resultados de Lego',
-          icon: 'error',
-          confirmButtonText: 'Aceptar'
-        });
+        this.showErrorToast('No se pudieron cargar los resultados de Lego');
+        this.endRefresh();
+        this.legoResults = [];
+        this.originalLegoResults = [];
       }
     })
+  }
+
+  onEditLego(lego: any): void {
+    this.legoId = lego.id;
+    this.initialEditForm = { ...lego };
+    this.editForm.patchValue(lego);
+  }
+
+  startRefresh() {
+    this.isLoading = true;
+    this.showTable = false;
+    this.cdr.markForCheck();
+  }
+
+  endRefresh() {
+    this.isLoading = false;
+    this.showTable = true;
+    this.cdr.markForCheck();
+  }
+
+  onAddLego(): void {
+    if (this.editForm.valid) {
+      this.startRefresh();
+      this.isEditSet = this.editForm.value.lego !== this.initialEditForm.lego;
+      this.initialEditForm = { ...this.editForm.value };
+      this.initialEditForm = { ...this.initialEditForm, isEditSet: this.isEditSet };
+      this.appService.editLego(this.initialEditForm, this.legoId).subscribe({
+        next: (response) => {
+          this.showSuccessToast('Lego editado correctamente');
+          this.legoResults = this.legoResults.map(lego => {
+            if (lego.id === this.legoId) {
+              lego = { ...lego, ...response.data }
+            }
+            return lego;
+          });
+          this.originalLegoResults = [...this.legoResults];
+          this.editForm.reset();
+          this.isEditSet = false;
+          this.endRefresh();
+        },
+        error: (error) => {
+          this.showErrorToast('No se pudo editar la pieza de Lego');
+          console.error('Error editing Lego:', error);
+          this.editForm.reset();
+          this.isEditSet = false;
+          this.endRefresh();
+        }
+      })
+    }
   }
 }
