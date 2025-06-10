@@ -57,6 +57,9 @@ export class Home implements OnInit {
         this.loadSetImages();
         this.loadPieceImage();
         this.originalLegoPieces = [...this.legoPieces];
+        setTimeout(() => {
+          this.cdr.markForCheck(); // Ensure the view is updated
+        }, 1000);
       },
       error: (error) => {
         console.error('Error fetching lego pieces:', error);
@@ -214,6 +217,7 @@ export class Home implements OnInit {
 
   onOptionSelected(option: any): void {
     this.selectedOption = option[this.selectedSearchBy];
+    this.searchByInput.nativeElement.value = this.selectedOption;
     this.showSearchOptions = false;
     this.legoPieces = this.originalLegoPieces.filter(piece => piece[this.selectedSearchBy] === this.selectedOption);
   }
@@ -223,27 +227,45 @@ export class Home implements OnInit {
     this.editForm.patchValue(piece);
   }
 
+  loadEditPieces(pieces: any): void {
+    this.legoPieces = pieces;
+    this.originalLegoPieces = [...pieces];
+    this.loadPieceImage();
+    this.loadSetImages();
+    setTimeout(() => {
+      this.cdr.markForCheck(); // Ensure the view is updated
+    }, 1000);
+  }
+
   onSaveEditChanges(): void {
     const updatedPiece = this.editForm.value;
-
-    if (this.searchByInput.nativeElement.value !== '') {
-      this.onSearchOptionInput({ target: { value: this.searchByInput.nativeElement.value } });
-      this.onUpdatePieces(updatedPiece);
-    } else if (this.searchInput.nativeElement.value !== '') {
-      this.onSearchInput({ target: { value: this.searchInput.nativeElement.value } });
-      this.onUpdatePieces(updatedPiece);
-    } else {
-      this.onUpdatePieces(updatedPiece);
-    }
 
     this.appService.updateLegoPiece(this.pieceId, updatedPiece).subscribe({
       next: () => {
         this.onShowSuccessSwal('Cambios guardados', 'Los cambios se han guardado correctamente.');
         this.editForm.reset();
         this.pieceId = 0; // Reset pieceId after saving
-        setTimeout(() => {
-          this.loadPieces();
-        }, 0);
+        if (this.searchByInput.nativeElement.value !== '') {
+          this.appService.getLegoPiecesByCategory(this.selectedSearchBy, this.searchByInput.nativeElement.value).subscribe({
+            next: (pieces) => {
+              this.loadEditPieces(pieces);
+            },
+            error: (error) => {
+              console.error('Error fetching pieces by category:', error);
+              this.onShowErrorSwal('Error al buscar piezas', 'Hubo un problema al buscar las piezas. Por favor, inténtalo de nuevo.');
+            }
+          });
+        } else if (this.searchInput.nativeElement.value !== '') {
+          this.appService.getLegoPiecesByCode(this.searchInput.nativeElement.value).subscribe({
+            next: (pieces) => {
+              this.loadEditPieces(pieces);
+            },
+            error: (error) => {
+              console.error('Error fetching pieces by code:', error);
+              this.onShowErrorSwal('Error al buscar piezas', 'Hubo un problema al buscar las piezas. Por favor, inténtalo de nuevo.');
+            }
+          });
+        }
       },
       error: (error) => {
         console.error('Error updating piece:', error);
@@ -252,23 +274,13 @@ export class Home implements OnInit {
     });
   }
 
-  onUpdatePieces(updatedPiece: any): void {
-    const index = this.legoPieces.findIndex(p => p.id === this.pieceId);
-    if (index !== -1) {
-      this.legoPieces[index] = { ...this.legoPieces[index], ...updatedPiece };
-    }
-    const originalIndex = this.originalLegoPieces.findIndex(p => p.id === this.pieceId);
-    if (originalIndex !== -1) {
-      this.originalLegoPieces[originalIndex] = { ...this.originalLegoPieces[originalIndex], ...updatedPiece };
-    }
-  }
-
   onAddFormSubmit(): void {
     const newPiece = this.addForm.value;
     this.appService.addLegoPiece(newPiece).subscribe({
       next: () => {
         this.onShowSuccessSwal('Pieza añadida', 'La nueva pieza se ha añadido correctamente.');
         this.addForm.reset();
+        this.loadPieces(); // Reload pieces to include the new one
       },
       error: (error) => {
         console.error('Error adding piece:', error);
@@ -281,6 +293,7 @@ export class Home implements OnInit {
     this.appService.deleteLegoPiece(piece.id).subscribe({
       next: () => {
         this.onShowSuccessSwal('Pieza eliminada', 'La pieza se ha eliminado correctamente.');
+        this.loadPieces(); // Reload pieces to reflect deletion
       },
       error: (error) => {
         console.error('Error deleting piece:', error);
