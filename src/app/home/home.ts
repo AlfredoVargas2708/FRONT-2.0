@@ -218,7 +218,6 @@ export class Home {
     this.showTable = false;
     this.searchResults = [];
     this.originalSearchResults = [];
-    this.selectedOption = '';
     this.selectedSearchBy = '';
     this.legoResults = [];
     this.originalLegoResults = [];
