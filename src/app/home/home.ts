@@ -102,6 +102,7 @@ export class Home {
     const searchBy = event.target.value;
     this.selectedSearchBy = searchBy;
     this.searchByInput.nativeElement.value = '';
+    this.searchByInput.nativeElement.focus();
     this.showTable = false;
     this.searchResults = [];
     this.originalSearchResults = [];
@@ -214,11 +215,8 @@ export class Home {
 
   onClearSearch(): void {
     this.searchByInput.nativeElement.value = '';
-    this.showResults = false;
+    this.searchByInput.nativeElement.focus();
     this.showTable = false;
-    this.searchResults = [];
-    this.originalSearchResults = [];
-    this.selectedSearchBy = '';
     this.legoResults = [];
     this.originalLegoResults = [];
     this.isEditSet = false;
