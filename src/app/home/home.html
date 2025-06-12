@@ -47,7 +47,7 @@
                                 <div class="d-flex flex-column gap-2">
                                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal"
                                         (click)="onEditLego(lego)">Edit</button>
-                                    <button class="btn btn-danger">Delete</button>
+                                    <button class="btn btn-danger" (click)="deleteLego(lego.id)">Delete</button>
                                 </div>
                             </td>
                         </ng-container>

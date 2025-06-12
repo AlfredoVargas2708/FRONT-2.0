@@ -26,4 +26,8 @@ export class AppService {
     return this.http.put(`${environment.apiUrl}/${id}`, data);
   }
 
+  deleteLego(id: number): Observable<any> {
+    return this.http.delete(`${environment.apiUrl}/${id}`);
+  }
+
 }

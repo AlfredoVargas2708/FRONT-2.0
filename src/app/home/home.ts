@@ -177,6 +177,36 @@ export class Home {
     });
   }
 
+  showWarningToast(message: string): void {
+    Swal.fire({
+      title: 'Advertencia',
+      text: message,
+      icon: 'warning',
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      showCancelButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.appService.deleteLego(this.legoId).subscribe({
+          next: () => {
+            this.showSuccessToast('Lego eliminado correctamente');
+            this.legoResults = this.legoResults.filter(lego => lego.id !== this.legoId);
+            this.originalLegoResults = [...this.legoResults];
+            this.cdr.markForCheck();
+          },
+          error: () => {
+            this.showErrorToast('No se pudo eliminar la pieza de Lego');
+          }
+        });
+      }else {
+        this.showErrorToast('Eliminación cancelada');
+        this.legoId = 0;
+      }
+    });
+  }
+
   loadLegoResults(): void {
     this.startRefresh();
     this.appService.getLegoResults(this.selectedSearchBy, this.selectedOption).subscribe({
@@ -253,5 +283,10 @@ export class Home {
         }
       })
     }
+  }
+
+  deleteLego(id: number): void {
+    this.legoId = id;
+    this.showWarningToast('¿Estás seguro de eliminar esta pieza de Lego?');
   }
 }
