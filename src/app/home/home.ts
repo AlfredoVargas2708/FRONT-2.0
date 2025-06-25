@@ -128,6 +128,7 @@ export class Home {
   onSearchResult(event: any): void {
     this.searchResults = this.originalSearchResults.filter(result => result.toLowerCase().includes(event.target.value.toLowerCase()));
     this.showResults = this.searchResults.length > 0;
+    this.cdr.markForCheck();
   }
 
   onSelectOption(option: any): void {
