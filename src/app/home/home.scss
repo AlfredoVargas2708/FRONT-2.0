@@ -6,6 +6,8 @@
 
 .search-by-container {
     position: relative;
+    display: flex;
+    align-items: center;
     flex-grow: 1;
 }
 
@@ -46,11 +48,34 @@
 }
 
 .image-cell img {
-    width: 60px;
     height: auto;
     object-fit: contain;
+
+    &.set-image-class {
+        width: 40%;
+        height: 40%;
+    }
+
+    &.image-piece-class {
+        width: 30%;
+        height: 30%;
+    }
 }
 
 .lego-table {
     overflow-x: auto;
+}
+
+.modal-content {
+    border-radius: 1rem;
+}
+
+.modal-header,
+.modal-footer {
+    border: none;
+}
+
+.form-control,
+.form-select {
+    border-radius: 0.5rem;
 }

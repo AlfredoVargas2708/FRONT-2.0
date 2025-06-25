@@ -47,7 +47,8 @@
                         <ng-container *ngFor="let body of tableBody">
                             <td *ngIf="body.type === 'image'" class="text-center image-cell">
                                 <img [src]="lego[body.name]"
-                                    [alt]="body.name === 'imagePiece' ? 'Imagen de la Pieza' : 'Imagen del Set'" />
+                                    [alt]="body.name === 'imagePiece' ? 'Imagen de la Pieza' : 'Imagen del Set'"
+                                    [ngClass]="body.name === 'imagePiece' ? 'image-piece-class' : 'set-image-class'" />
                             </td>
                             <td *ngIf="body.type === 'text' || body.type === 'number'" class="text-center">
                                 {{ lego[body.name] }}
@@ -67,6 +68,82 @@
             <div class="text-center" *ngIf="isLoading">
                 <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="editModalLabel">✏️ Editar Pieza de LEGO</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="editForm" class="row row-cols-1 row-cols-md-2 g-3">
+                    <div class="col" *ngFor="let field of formFields">
+                        <label [for]="field.name" class="form-label">{{ field.label }}</label>
+                        <input *ngIf="field.type === 'text' || field.type === 'number'" [id]="field.name"
+                            [formControlName]="field.name" class="form-control" />
+                        <select *ngIf="field.name === 'pedido' || field.name === 'completo'"
+                            [formControlName]="field.name" class="form-select">
+                            <option value="" disabled selected>Seleccionar...</option>
+                            <option *ngFor="let option of field.name === 'pedido' ? pedidoOptions : completoOptions"
+                                [value]="option[field.name]">
+                                {{ option[field.name] }}
+                            </option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    ❌ Cancelar
+                </button>
+                <button type="button" class="btn btn-success" (click)="onAddLego()">
+                    💾 Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ADD MODAL -->
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="addModalLabel">➕ Agregar Nueva Pieza de LEGO</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="addForm" class="row row-cols-1 row-cols-md-2 g-3">
+                    <div class="col" *ngFor="let field of formFields">
+                        <label [for]="field.name" class="form-label">{{ field.label }}</label>
+                        <input *ngIf="field.type === 'text' || field.type === 'number'" [id]="field.name"
+                            [formControlName]="field.name" class="form-control" />
+                        <select *ngIf="field.name === 'pedido' || field.name === 'completo'"
+                            [formControlName]="field.name" class="form-select">
+                            <option value="" disabled selected>Seleccionar...</option>
+                            <option *ngFor="let option of field.name === 'pedido' ? pedidoOptions : completoOptions"
+                                [value]="option[field.name]">
+                                {{ option[field.name] }}
+                            </option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    ❌ Cancelar
+                </button>
+                <button type="button" class="btn btn-success" (click)="OnSubmitLego()">
+                    ✅ Guardar Pieza
+                </button>
             </div>
         </div>
     </div>
